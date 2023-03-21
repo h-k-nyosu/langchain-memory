@@ -1,34 +1,42 @@
 import httpx
 from fastapi import APIRouter, Depends
 from app.models.prompt import PromptRequest, PromptResponse
-from app.core.config import OPENAI_API_KEY, GOOGLE_API_KEY, GOOGLE_CSE_ID
-from langchain.agents import Tool
+from app.core.config import OPENAI_API_KEY
+from app.core.helper import format_string_for_slack
+from langchain.prompts import (
+    ChatPromptTemplate, 
+    MessagesPlaceholder, 
+    SystemMessagePromptTemplate, 
+    HumanMessagePromptTemplate
+)
+from langchain.chains import ConversationChain
+from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from langchain import OpenAI
-from langchain.utilities import GoogleSearchAPIWrapper
-from langchain.agents import initialize_agent
+from langchain.schema import (
+    AIMessage,
+    HumanMessage,
+    SystemMessage
+)
 
 router = APIRouter()
 
-search = GoogleSearchAPIWrapper(google_api_key=GOOGLE_API_KEY, google_cse_id=GOOGLE_CSE_ID)
-tools = [
-    Tool(
-        name = 'Search',
-        func=search.run,
-        description='useful for when you need to answer questions about current events'
-    )
-]
-memory = ConversationBufferMemory(memory_key='chat_history')
-llm=OpenAI(model_name='gpt-4', max_tokens=6000)
-agent_chain = initialize_agent(tools, llm, agent='chat-zero-shot-react-description', verbose=True, memory=memory)
+system_settings = """あなたは超知能を持つAIアシスタントとして、ユーザーに親身に寄り添って回答します。
+回答することによってユーザーから「ありがとう」と言われることがゴールです。常にそれを目指してください。
+"""
 
+
+prompt = ChatPromptTemplate.from_messages([
+    SystemMessagePromptTemplate.from_template(system_settings),
+    MessagesPlaceholder(variable_name="history"),
+    HumanMessagePromptTemplate.from_template("{input}")
+])
+conversation = ConversationChain(
+    memory=ConversationBufferMemory(return_messages=True),
+    prompt=prompt,
+    llm=ChatOpenAI(temperature=0.3, model_name='gpt-4'))
 
 @router.post('/gpt')
 async def gpt_endpoint(prompt: str):
-    res = agent_chain.run(input=prompt)
-    return res
-
-# healthcheck api
-@router.get('/healthcheck')
-def healthcheck():
-    return {'status': 'ok'}
+    res = conversation.predict(input=prompt)
+    
+    return {'status': 'ok', 'response': res }
