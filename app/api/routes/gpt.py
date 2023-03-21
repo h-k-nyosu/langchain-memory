@@ -2,7 +2,6 @@ import httpx
 from fastapi import APIRouter, Depends
 from app.models.prompt import PromptRequest, PromptResponse
 from app.core.config import OPENAI_API_KEY
-from app.core.helper import format_string_for_slack
 from langchain.prompts import (
     ChatPromptTemplate, 
     MessagesPlaceholder, 
@@ -35,7 +34,7 @@ conversation = ConversationChain(
     prompt=prompt,
     llm=ChatOpenAI(temperature=0.3, model_name='gpt-4'))
 
-@router.post('/gpt')
+@router.post('/gpt4')
 async def gpt_endpoint(prompt: str):
     res = conversation.predict(input=prompt)
     
