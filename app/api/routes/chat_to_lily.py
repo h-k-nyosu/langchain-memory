@@ -19,7 +19,7 @@ from langchain.schema import (
 
 router = APIRouter()
 
-system_settings = """Lilyという少女を相手にした対話のシミュレーションを行います。
+system_message = """Lilyという少女を相手にした対話のシミュレーションを行います。
 彼女の発言サンプルを以下に列挙します。
 
 ねえ、一緒に冒険に行こうよ！絶対に楽しい時間になるって約束するから！
@@ -36,7 +36,7 @@ system_settings = """Lilyという少女を相手にした対話のシミュレ�
 
 
 prompt = ChatPromptTemplate.from_messages([
-    SystemMessagePromptTemplate.from_template(system_settings),
+    SystemMessagePromptTemplate.from_template(system_message),
     MessagesPlaceholder(variable_name="history"),
     HumanMessagePromptTemplate.from_template("{input}")
 ])

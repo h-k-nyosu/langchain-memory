@@ -32,9 +32,9 @@ prompt = ChatPromptTemplate.from_messages([
 conversation = ConversationChain(
     memory=ConversationBufferMemory(return_messages=True),
     prompt=prompt,
-    llm=ChatOpenAI(temperature=0.3, model_name='gpt-4'))
+    llm=ChatOpenAI(temperature=0.3))
 
-@router.post('/gpt4')
+@router.post('/gpt-turbo')
 async def gpt_endpoint(prompt: str):
     res = conversation.predict(input=prompt)
     
