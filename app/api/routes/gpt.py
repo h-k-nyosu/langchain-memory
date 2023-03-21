@@ -26,7 +26,7 @@ agent_chain = initialize_agent(tools, llm, agent='chat-zero-shot-react-descripti
 @router.post('/gpt')
 async def gpt_endpoint(prompt: str):
     res = agent_chain.run(input=prompt)
-    return {'generated_text': res}
+    return res
 
 # healthcheck api
 @router.get('/healthcheck')
