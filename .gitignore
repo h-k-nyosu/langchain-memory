@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyc
+
+# ログファイル
+*.log
+
+# 環境変数ファイル
+.env
+
+# テスト用のカバレッジレポート
+htmlcov/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
