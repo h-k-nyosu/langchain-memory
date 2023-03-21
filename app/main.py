@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from app.api.routes.healthcheck import router as healthcheck_router
-from app.api.routes.gpt import router as gpt_router
+from app.api.routes.gpt4 import router as gpt_router
 from app.api.routes.chat_to_lily import router as lily_router
 
 app = FastAPI()
