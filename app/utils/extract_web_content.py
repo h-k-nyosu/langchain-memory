@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 
-def extract_web_content(url: list, delay=1):
+def extract_web_content(url: list, delay=0.5):
     print(f"URL: {url}")
     time.sleep(delay)  # ここでリクエスト間の遅延を設定しています
     response = requests.get(url)

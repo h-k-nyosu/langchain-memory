@@ -1,8 +1,11 @@
+service: slack-gpt
 runtime: python310
 instance_class: F1
+env_variables:
+  PORT: "8080"
 entrypoint: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
 
 automatic_scaling:
   target_cpu_utilization: 0.65
-  max_instances: 3
+  max_instances: 10
   min_instances: 1
